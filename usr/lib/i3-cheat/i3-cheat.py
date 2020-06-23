@@ -5,6 +5,8 @@ import os
 import re
 import socket
 import struct
+import shutil
+import Functions as fn
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -83,6 +85,15 @@ class I3CheatWindow(Gtk.ApplicationWindow):
         self.set_default_size(-1, 740)
         self.set_border_width(3)
 
+        if not fn.os.path.isdir(fn.home + "/.config/i3-cheat"):
+            fn.os.mkdir(fn.home + "/.config/i3-cheat")
+
+        if not fn.os.path.isfile(fn.home + "/.config/i3-cheat/settings.conf"):
+            shutil.copy(fn.root_config, fn.home + "/.config/i3-cheat/settings.conf")
+
+        fn.get_config(self, fn.config)
+        self.commands = self.commands
+
         accel_group = Gtk.AccelGroup()
         accel_group.connect(Gdk.KEY_h, 0, 0, self.prev_mode)
         accel_group.connect(Gdk.KEY_l, 0, 0, self.next_mode)
@@ -115,9 +126,10 @@ class I3CheatWindow(Gtk.ApplicationWindow):
             keybind_column.set_min_width(300)
             tree.append_column(keybind_column)
 
-            # command_column = Gtk.TreeViewColumn("Command", Gtk.CellRendererText(), text=3)
-            # command_column.set_min_width(300)
-            # tree.append_column(command_column)
+            if self.commands:
+                command_column = Gtk.TreeViewColumn("Command", Gtk.CellRendererText(), text=3)
+                command_column.set_min_width(300)
+                tree.append_column(command_column)
 
             scrolled = Gtk.ScrolledWindow()
             scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)

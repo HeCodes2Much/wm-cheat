@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+python3 /usr/lib/i3-cheat/i3-cheat.py
