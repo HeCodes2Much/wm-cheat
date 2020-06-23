@@ -1,1 +1,1 @@
-# 13-cheat
+# i3-cheat
