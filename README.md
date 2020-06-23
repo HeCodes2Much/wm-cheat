@@ -17,3 +17,10 @@ $super_b+KP_Enter \
 ## My config
 
 [Download](https://raw.githubusercontent.com/TheCynicalTeam/DotFiles/master/.config/i3/config)
+
+### i3-cheat config
+`~/.config/i3-cheat/settings.conf`
+```
+[settings]
+commands=False
+```
