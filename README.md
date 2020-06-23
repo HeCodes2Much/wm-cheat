@@ -14,7 +14,7 @@ $super_b+KP_Enter \
 
 ```
 
-## My config
+## My i3 config
 
 [Download](https://raw.githubusercontent.com/TheCynicalTeam/DotFiles/master/.config/i3/config)
 
