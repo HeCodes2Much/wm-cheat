@@ -13,3 +13,7 @@ $super_b+KP_Enter \
   $exe $TerminalEmulator;focus
 
 ```
+
+## My config
+
+[Download](https://raw.githubusercontent.com/TheCynicalTeam/DotFiles/master/.config/i3/config)
