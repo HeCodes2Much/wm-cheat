@@ -7,6 +7,7 @@ import socket
 import struct
 import shutil
 import Functions as fn
+import configparser
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -38,8 +39,25 @@ def upsert_variable(key, value):
 regex = r"\s*set (\$\S+)\s+(.+)"
 regex2 = r"^## Category: ((.*\n){4})"
 
-home = os.environ['HOME']
-with open(f'{home}/.config/i3/config', mode='r') as inputfile:
+home = os.path.expanduser("~")
+if os.path.isfile(home + "/.config/i3-cheat/settings.conf"):
+    config = home + "/.config/i3-cheat/settings.conf"
+else:
+    config = ''.join([str(Path(__file__).parents[3]), "/etc/i3-cheat.conf"])
+
+parser = configparser.RawConfigParser()
+parser.read(config)
+
+configFile = f"{home}/.config/i3/config"
+
+if parser.has_section("settings"):
+    if parser.has_option("settings", "config"):
+        configFile = str(parser.get("settings", "config"))
+
+if configFile.startswith('~'):
+    configFile = configFile.replace('~',home)
+
+with open(f'{configFile}', mode='r') as inputfile:
     filelines = inputfile.read()
 
 matches = re.finditer(regex, filelines, re.MULTILINE)
