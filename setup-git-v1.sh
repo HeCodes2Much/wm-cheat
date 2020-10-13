@@ -31,6 +31,8 @@ sudo git config --system core.editor nano
 git config --global credential.helper cache
 git config --global credential.helper 'cache --timeout=25000'
 git config --global push.default simple
+git config pull.rebase false  # merge (the default strategy)
+git config pull.ff only       # fast-forward only
 
 
 echo "################################################################"
