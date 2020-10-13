@@ -113,9 +113,9 @@ class I3CheatWindow(Gtk.ApplicationWindow):
         self.commands = self.commands
 
         accel_group = Gtk.AccelGroup()
-        accel_group.connect(Gdk.KEY_h, 0, 0, self.prev_mode)
-        accel_group.connect(Gdk.KEY_l, 0, 0, self.next_mode)
-        accel_group.connect(Gdk.KEY_Escape, 0, 0, self._quit)
+        accel_group.connect(Gdk.keyval_from_name('Left'), Gdk.ModifierType.SUPER_MASK, 0, self.prev_mode)
+        accel_group.connect(Gdk.keyval_from_name('Right'), Gdk.ModifierType.SUPER_MASK, 0, self.next_mode)
+        accel_group.connect(Gdk.keyval_from_name('Escape'), 0, 0, self._quit)
         self.add_accel_group(accel_group)
 
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
