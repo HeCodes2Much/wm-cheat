@@ -40,15 +40,21 @@ regex = r"\s*set (\$\S+)\s+(.+)"
 regex2 = r"^## Category: ((.*\n){4})"
 
 home = os.path.expanduser("~")
-if os.path.isfile(home + "/.config/i3-cheat/settings.conf"):
-    config = home + "/.config/i3-cheat/settings.conf"
+if os.path.isfile("/etc/bspwm-cheat.conf"):
+    if os.path.isfile(home + "/.config/bspwn-cheat/settings.conf"):
+        config = home + "/.config/bspwm-cheat/settings.conf"
+    else:
+        config = ''.join([str(Path(__file__).parents[3]), "/etc/bpswm-cheat.conf"])
+    configFile = f"{home}/.config/sxhkd/sxhkdrc"
 else:
-    config = ''.join([str(Path(__file__).parents[3]), "/etc/i3-cheat.conf"])
+    if os.path.isfile(home + "/.config/i3-cheat/settings.conf"):
+        config = home + "/.config/i3-cheat/settings.conf"
+    else:
+        config = ''.join([str(Path(__file__).parents[3]), "/etc/i3-cheat.conf"])
+    configFile = f"{home}/.config/i3/config"
 
 parser = configparser.RawConfigParser()
 parser.read(config)
-
-configFile = f"{home}/.config/i3/config"
 
 if parser.has_section("settings"):
     if parser.has_option("settings", "config"):
