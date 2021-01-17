@@ -2,16 +2,13 @@
 
 To run i3-cheat your i3 config will need to be inside `~/.config/i3/config` and will need to be marked like below
 
+**Note:** you may also change the config location using the config file settings also marked below
+
 ```
-set $TerminalEmulator kitty
-
-## Category: Applications;
-# Description: Launch $TerminalEmulator;
-$super_b+Return \
-  $exe $TerminalEmulator;focus
-$super_b+KP_Enter \
-  $exe $TerminalEmulator;focus
-
+## Category:  Main Keybinds;
+# Description: Kill a window;
+Mod4 + Shift + c\
+	kill
 ```
 
 ## My i3 config
@@ -23,4 +20,28 @@ $super_b+KP_Enter \
 ```
 [settings]
 commands=False
+config=~/.config/i3/config
+```
+
+# bspwm-cheat
+
+To run bspwm-cheat your sxhkd config will need to be inside `~/.config/sxhkd/sxhkdrc` and will need to be marked like below
+
+**Note:** you may also change the config location using the config file settings also marked below
+
+```
+## Category:  Main Keybinds;
+# Description: Kill a window;
+super + shift + c
+	bspc node -c
+```
+
+**Sorry** but I do not have a bspwm config anymore
+
+### bspwm-cheat config
+`~/.config/bspwm-cheat/settings.conf`
+```
+[settings]
+commands=False
+config=~/.config/sxhkd/sxhkdrc
 ```
