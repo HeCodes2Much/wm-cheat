@@ -7,6 +7,7 @@ import socket
 import struct
 import shutil
 import Functions as fn
+from pathlib import Path
 import configparser
 
 import gi
