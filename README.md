@@ -13,7 +13,7 @@ Mod4 + Shift + c\
 
 ## My i3 config
 
-[Download](https://raw.githubusercontent.com/TheCynicalTeam/DotFiles/master/.config/i3/config)
+[Download](https://raw.githubusercontent.com/The-Repo-Club/DotFiles/master/.config/i3/config)
 
 ### i3-cheat config
 `~/.config/i3-cheat/settings.conf`

@@ -103,7 +103,7 @@ def mode_label(mode):
     label.set_text(str(mode))
     return label
 
-class I3CheatWindow(Gtk.ApplicationWindow):
+class WMCheatWindow(Gtk.ApplicationWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._tab_lookup = dict()
@@ -167,7 +167,7 @@ class I3CheatWindow(Gtk.ApplicationWindow):
         self.current_page().grab_focus()
 
         style = Gtk.CssProvider()
-        style.load_from_data(I3Cheat.CSS)
+        style.load_from_data(WMCheat.CSS)
         Gtk.StyleContext.add_provider_for_screen(
             Gdk.Screen.get_default(),
             style,
@@ -193,7 +193,7 @@ class I3CheatWindow(Gtk.ApplicationWindow):
     def _quit(self, *args):
         self.close()
 
-class I3Cheat(Gtk.Application):
+class WMCheat(Gtk.Application):
     CSS = b"""
         * {
             font-size: 16px;
@@ -215,7 +215,7 @@ class I3Cheat(Gtk.Application):
 
     def do_command_line(self, cl):
         if not self._window:
-            self._window = I3CheatWindow(application=self, title="I3 Cheatsheet")
+            self._window = WMCheatWindow(application=self, title="Window Manager Cheatsheet")
             self._window.show_all()
 
         mode = cl.get_options_dict().lookup_value('mode')
@@ -231,7 +231,7 @@ class I3Cheat(Gtk.Application):
 if __name__ == '__main__':
     import sys
     import signal
-    app = I3Cheat()
+    app = WMCheat()
     # so ctrl+c still works
     GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGINT, app.quit)
     app.run(sys.argv)
