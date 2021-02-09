@@ -209,7 +209,7 @@ class WMCheat(Gtk.Application):
     """
 
     def __init__(self):
-        super().__init__(application_id="com.github.thecynicalliger.keybinds", flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
+        super().__init__(application_id="com.github.The-Repo-Club.keybinds", flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
         self.add_main_option('mode', ord('m'), 0, GLib.OptionArg.STRING, "Mode tab to open", "MODE")
         self._window = None
 
