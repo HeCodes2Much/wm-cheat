@@ -64,11 +64,19 @@ if parser.has_section("settings"):
 if configFile.startswith('~'):
     configFile = configFile.replace('~',home)
 
-with open(f'{configFile}', mode='r') as inputfile:
-    filelines = inputfile.read()
+filelines = ''
 
-matches = re.finditer(regex, filelines, re.MULTILINE)
-matches2 = re.finditer(regex2, filelines, re.MULTILINE)
+with open(f'{configFile}', mode='r') as inputfile:
+    for line in inputfile:
+        split_line = line.split(' ')
+        if split_line[0] == "include":
+            with open(split_line[1].replace("$HOME", f"{home}").rstrip("\n")) as f1:
+               filelines += f1.read()
+        else:
+            filelines += line
+
+matches = re.finditer(regex, filelines.rstrip("\n"), re.MULTILINE)
+matches2 = re.finditer(regex2, filelines.rstrip("\n"), re.MULTILINE)
 
 for num, match in enumerate(matches, start=1):
     if match.group():
