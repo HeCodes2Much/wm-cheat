@@ -102,8 +102,14 @@ for num, match in enumerate(matches2, start=1):
     category[str_description]['keybind'] = str_keybind
     category[str_description]['command'] = str_command
 
-# with open('./json/keybinds.json', 'w') as json_data:
-#     json.dump(data, json_data, indent=4)
+file_path=f"{home}/.cache/wm-cheat/keybinds.json"
+directory = os.path.dirname(file_path)
+try:
+    os.stat(directory)
+except:
+    os.mkdir(directory)
+with open(file_path, "w") as json_data:
+    json.dump(data, json_data, indent=4)
 
 def mode_label(mode):
     'Create a GTK label for mode'''
