@@ -73,7 +73,7 @@ with open(f'{configFile}', mode='r') as inputfile:
             with open(split_line[1].replace("$HOME", f"{home}").rstrip("\n")) as f1:
                filelines += f1.read()
         else:
-            filelines += line
+            filelines += line.lstrip("  ")
 
 matches = re.finditer(regex, filelines.rstrip("\n"), re.MULTILINE)
 matches2 = re.finditer(regex2, filelines.rstrip("\n"), re.MULTILINE)
