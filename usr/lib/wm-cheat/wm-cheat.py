@@ -1,28 +1,29 @@
 #!/usr/bin/env python3
 
-import json
 import os
 import re
-import socket
-import struct
 import shutil
 import Functions as fn
 from pathlib import Path
 import configparser
-
+import sys
 import gi
+
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk, Gio, GLib, Gtk
 
 variables = []
-mapping = [ ('bindsym', ''), ('Mod1', 'Alt'), ('Mod4', 'Super')]
+mapping = [('bindsym', ''), ('Mod1', 'Alt'), ('Mod4', 'Super')]
+
+
 def do_replacements(line):
     for key, value in variables:
         line = line.replace(key, value)
     for k, v in mapping:
         line = line.replace(k, v)
     return line
+
 
 def upsert_variable(key, value):
     new_var = (key, value)
@@ -37,16 +38,30 @@ def upsert_variable(key, value):
             return
     variables.append(new_var)
 
+
 regex = r"\s*set (\$\S+)\s+(.+)"
 regex2 = r"^## Category: ((.*\n){4})"
 
 home = os.path.expanduser("~")
-if os.path.isfile("/etc/bspwm-cheat.conf"):
+if "--bspwm" in sys.argv:
     if os.path.isfile(home + "/.config/bspwn-cheat/settings.conf"):
         config = home + "/.config/bspwm-cheat/settings.conf"
     else:
-        config = ''.join([str(Path(__file__).parents[3]), "/etc/bpswm-cheat.conf"])
-    configFile = f"{home}/.config/sxhkd/sxhkdrc"
+        config = ''.join(
+            [str(Path(__file__).parents[3]), "/etc/bpswm-cheat.conf"])
+    configFile = f"{home}/.config/bspwm/sxhkdrc"
+elif "--i3" in sys.argv:
+    if os.path.isfile(home + "/.config/i3-cheat/settings.conf"):
+        config = home + "/.config/i3-cheat/settings.conf"
+    else:
+        config = ''.join([str(Path(__file__).parents[3]), "/etc/i3-cheat.conf"])
+    configFile = f"{home}/.config/i3/config"
+elif "--dk" in sys.argv:
+    if os.path.isfile(home + "/.config/dk-cheat/settings.conf"):
+        config = home + "/.config/dk-cheat/settings.conf"
+    else:
+        config = ''.join([str(Path(__file__).parents[3]), "/etc/dk-cheat.conf"])
+    configFile = f"{home}/.config/dk/sxhkdrc"
 else:
     if os.path.isfile(home + "/.config/i3-cheat/settings.conf"):
         config = home + "/.config/i3-cheat/settings.conf"
@@ -62,7 +77,7 @@ if parser.has_section("settings"):
         configFile = str(parser.get("settings", "config"))
 
 if configFile.startswith('~'):
-    configFile = configFile.replace('~',home)
+    configFile = configFile.replace('~', home)
 
 filelines = ''
 
@@ -70,8 +85,11 @@ with open(f'{configFile}', mode='r') as inputfile:
     for line in inputfile:
         split_line = line.split(' ')
         if split_line[0] == "include":
-            with open(split_line[1].replace("$HOME", f"{home}").rstrip("\n")) as f1:
-               filelines += f1.read()
+            dir = split_line[1].replace('~', home).replace('*.conf',
+                                                           '').rstrip("\n")
+            for path in Path(dir).glob("*"):
+                with open(path) as f1:
+                    filelines += f1.read()
         else:
             filelines += line.lstrip("  ")
 
@@ -84,12 +102,16 @@ for num, match in enumerate(matches, start=1):
         continue
 
 data = {}
-category={}
+category = {}
 for num, match in enumerate(matches2, start=1):
     lines = match.group(1).splitlines()
 
-    str_category = do_replacements(lines[0].replace('## Category: ', '').replace(';', '').strip())
-    str_description = do_replacements(lines[1].replace('# Description: ', '').replace(';', '').strip())
+    str_category = do_replacements(lines[0].replace('## Category: ',
+                                                    '').replace(';',
+                                                                '').strip())
+    str_description = do_replacements(lines[1].replace('# Description: ',
+                                                       '').replace(';',
+                                                                   '').strip())
     str_keybind = do_replacements(lines[2].replace('\\', '').strip())
     str_command = do_replacements(lines[3].replace('\\', '').strip())
     # create category if not exist
@@ -102,46 +124,63 @@ for num, match in enumerate(matches2, start=1):
     category[str_description]['keybind'] = str_keybind
     category[str_description]['command'] = str_command
 
-file_path=f"{home}/.cache/wm-cheat/keybinds.json"
-directory = os.path.dirname(file_path)
-try:
-    os.stat(directory)
-except:
-    os.mkdir(directory)
-with open(file_path, "w") as json_data:
-    json.dump(data, json_data, indent=4)
 
 def mode_label(mode):
-    'Create a GTK label for mode'''
+    'Create a GTK label for mode' ''
     label = Gtk.Label()
     label.set_text(str(mode))
     return label
 
+
 class WMCheatWindow(Gtk.ApplicationWindow):
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._tab_lookup = dict()
         self.set_default_size(-1, 740)
         self.set_border_width(3)
 
-        if not fn.os.path.isdir(fn.home + "/.config/i3-cheat"):
-            fn.os.mkdir(fn.home + "/.config/i3-cheat")
+        if "--i3" in sys.argv:
+            if not fn.os.path.isdir(fn.home + "/.config/i3-cheat"):
+                fn.os.mkdir(fn.home + "/.config/i3-cheat")
 
-        if not fn.os.path.isfile(fn.home + "/.config/i3-cheat/settings.conf"):
-            shutil.copy(fn.root_config, fn.home + "/.config/i3-cheat/settings.conf")
+            if not fn.os.path.isfile(fn.home + "/.config/i3-cheat/settings.conf"):
+                shutil.copy(fn.root_config, fn.home + "/.config/i3-cheat/settings.conf")
+        elif "--bspwm" in sys.argv:
+            if not fn.os.path.isdir(fn.home + "/.config/bspwm-cheat"):
+                fn.os.mkdir(fn.home + "/.config/bspwm-cheat")
+
+            if not fn.os.path.isfile(fn.home + "/.config/bspwm-cheat/settings.conf"):
+                shutil.copy(fn.root_config, fn.home + "/.config/bspwm-cheat/settings.conf")
+        elif "--dk" in sys.argv:
+            if not fn.os.path.isdir(fn.home + "/.config/dk-cheat"):
+                fn.os.mkdir(fn.home + "/.config/dk-cheat")
+
+            if not fn.os.path.isfile(fn.home + "/.config/dk-cheat/settings.conf"):
+                shutil.copy(fn.root_config, fn.home + "/.config/dk-cheat/settings.conf")
+        else:
+            if not fn.os.path.isdir(fn.home + "/.config/i3-cheat"):
+                fn.os.mkdir(fn.home + "/.config/i3-cheat")
+
+            if not fn.os.path.isfile(fn.home + "/.config/i3-cheat/settings.conf"):
+                shutil.copy(fn.root_config, fn.home + "/.config/i3-cheat/settings.conf")
 
         fn.get_config(self, fn.config)
         self.commands = self.commands
 
         accel_group = Gtk.AccelGroup()
-        accel_group.connect(Gdk.keyval_from_name('Left'), Gdk.ModifierType.SUPER_MASK, 0, self.prev_mode)
-        accel_group.connect(Gdk.keyval_from_name('Right'), Gdk.ModifierType.SUPER_MASK, 0, self.next_mode)
+        accel_group.connect(Gdk.keyval_from_name('Left'),
+                            Gdk.ModifierType.SUPER_MASK, 0, self.prev_mode)
+        accel_group.connect(Gdk.keyval_from_name('Right'),
+                            Gdk.ModifierType.SUPER_MASK, 0, self.next_mode)
         accel_group.connect(Gdk.keyval_from_name('Escape'), 0, 0, self._quit)
         self.add_accel_group(accel_group)
 
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
 
         self.notebook = Gtk.Notebook(scrollable=True)
+        if not data:
+            exit("No formated data can be found. Please make sure your config file is formated correctly.")
         for (category, array) in data.items():
             self.category = Gtk.Box()
             self.category.set_border_width(10)
@@ -151,22 +190,35 @@ class WMCheatWindow(Gtk.ApplicationWindow):
             for description in array:
                 keybind = array[description]['keybind']
                 command = array[description]['command']
-                store.append([category, str(description), str(keybind), str(command)])
+                store.append(
+                    [category,
+                     str(description),
+                     str(keybind),
+                     str(command)])
 
-            tree = Gtk.TreeView(model=store, headers_visible=True, enable_search=False, search_column=1)
+            tree = Gtk.TreeView(model=store,
+                                headers_visible=True,
+                                enable_search=False,
+                                search_column=1)
             tree.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
             tree.set_cursor(Gtk.TreePath(0), None, False)
 
-            description_column = Gtk.TreeViewColumn("Description", Gtk.CellRendererText(), text=1)
+            description_column = Gtk.TreeViewColumn("Description",
+                                                    Gtk.CellRendererText(),
+                                                    text=1)
             description_column.set_min_width(300)
             tree.append_column(description_column)
 
-            keybind_column = Gtk.TreeViewColumn("Keybind", Gtk.CellRendererText(), text=2)
+            keybind_column = Gtk.TreeViewColumn("Keybind",
+                                                Gtk.CellRendererText(),
+                                                text=2)
             keybind_column.set_min_width(300)
             tree.append_column(keybind_column)
 
             if self.commands:
-                command_column = Gtk.TreeViewColumn("Command", Gtk.CellRendererText(), text=3)
+                command_column = Gtk.TreeViewColumn("Command",
+                                                    Gtk.CellRendererText(),
+                                                    text=3)
                 command_column.set_min_width(300)
                 tree.append_column(command_column)
 
@@ -183,8 +235,7 @@ class WMCheatWindow(Gtk.ApplicationWindow):
         style = Gtk.CssProvider()
         style.load_from_data(WMCheat.CSS)
         Gtk.StyleContext.add_provider_for_screen(
-            Gdk.Screen.get_default(),
-            style,
+            Gdk.Screen.get_default(), style,
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     def current_page(self):
@@ -207,6 +258,7 @@ class WMCheatWindow(Gtk.ApplicationWindow):
     def _quit(self, *args):
         self.close()
 
+
 class WMCheat(Gtk.Application):
     CSS = b"""
         * {
@@ -223,13 +275,17 @@ class WMCheat(Gtk.Application):
     """
 
     def __init__(self):
-        super().__init__(application_id="com.github.The-Repo-Club.keybinds", flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
-        self.add_main_option('mode', ord('m'), 0, GLib.OptionArg.STRING, "Mode tab to open", "MODE")
+        super().__init__(application_id="com.github.The-Repo-Club.keybinds",
+                         flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
+        self.add_main_option('mode', ord('m'), 0, GLib.OptionArg.STRING,
+                             "Mode tab to open", "MODE")
         self._window = None
 
     def do_command_line(self, cl):
+
         if not self._window:
-            self._window = WMCheatWindow(application=self, title="Window Manager Cheatsheet")
+            self._window = WMCheatWindow(application=self,
+                                         title="Window Manager Cheatsheet")
             self._window.show_all()
 
         mode = cl.get_options_dict().lookup_value('mode')
@@ -242,10 +298,10 @@ class WMCheat(Gtk.Application):
     def do_startup(self):
         Gtk.Application.do_startup(self)
 
+
 if __name__ == '__main__':
-    import sys
     import signal
     app = WMCheat()
     # so ctrl+c still works
     GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGINT, app.quit)
-    app.run(sys.argv)
+    app.run()
