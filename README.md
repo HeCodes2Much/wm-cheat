@@ -25,7 +25,30 @@ config=~/.config/i3/config
 
 # bspwm-cheat
 
-To run bspwm-cheat your sxhkd config will need to be inside `~/.config/sxhkd/sxhkdrc` and will need to be marked like below
+To run bspwm-cheat your sxhkd config will need to be inside `~/.config/dk/sxhkdrc` and will need to be marked like below
+
+**Note:** you may also change the config location using the config file settings also marked below
+
+```
+## Category:  Main Keybinds;
+# Description: Kill a window;
+super + shift + c
+	bspc node -c
+```
+
+[Download](https://raw.githubusercontent.com/The-Repo-Club/DotFiles/master/.config/dk/sxhkdrc)
+
+### dk-cheat config
+`~/.config/dk-cheat/settings.conf`
+```
+[settings]
+commands=False
+config=~/.config/dk/sxhkdrc
+```
+
+# bspwm-cheat
+
+To run bspwm-cheat your sxhkd config will need to be inside `~/.config/bspwm/sxhkdrc` and will need to be marked like below
 
 **Note:** you may also change the config location using the config file settings also marked below
 
@@ -43,5 +66,5 @@ super + shift + c
 ```
 [settings]
 commands=False
-config=~/.config/sxhkd/sxhkdrc
+config=~/.config/bspwm/sxhkdrc
 ```
