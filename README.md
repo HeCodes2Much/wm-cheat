@@ -23,7 +23,7 @@ commands=False
 config=~/.config/i3/config
 ```
 
-# bspwm-cheat
+# dk-cheat
 
 To run bspwm-cheat your sxhkd config will need to be inside `~/.config/dk/sxhkdrc` and will need to be marked like below
 
