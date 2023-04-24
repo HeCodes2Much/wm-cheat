@@ -2,26 +2,38 @@
 #                  Author The-Repo-Club
 # =====================================================
 
-import subprocess
 import os
-import shutil
+import sys
 from pathlib import Path
 import configparser
 
 home = os.path.expanduser("~")
 base_dir = os.path.dirname(os.path.realpath(__file__))
-if os.path.isfile("/etc/bspwm-cheat.conf"):
+if "--bspwn" in sys.argv:
     if os.path.isfile(home + "/.config/bspwn-cheat/settings.conf"):
         config = home + "/.config/bspwm-cheat/settings.conf"
     else:
         config = ''.join([str(Path(__file__).parents[3]), "/etc/bpswm-cheat.conf"])
     root_config = ''.join([str(Path(__file__).parents[3]), "/etc/bspwm-cheat.conf"])
+elif "--i3" in sys.argv:
+    if os.path.isfile(home + "/.config/i3-cheat/settings.conf"):
+        config = home + "/.config/i3-cheat/settings.conf"
+    else:
+        config = ''.join([str(Path(__file__).parents[3]), "/etc/i3-cheat.conf"])
+    root_config = ''.join([str(Path(__file__).parents[3]), "/etc/i3-cheat.conf"])
+elif "--dk" in sys.argv:
+    if os.path.isfile(home + "/.config/dk-cheat/settings.conf"):
+        config = home + "/.config/dk-cheat/settings.conf"
+    else:
+        config = ''.join([str(Path(__file__).parents[3]), "/etc/dk-cheat.conf"])
+    root_config = ''.join([str(Path(__file__).parents[3]), "/etc/dk-cheat.conf"])
 else:
     if os.path.isfile(home + "/.config/i3-cheat/settings.conf"):
         config = home + "/.config/i3-cheat/settings.conf"
     else:
         config = ''.join([str(Path(__file__).parents[3]), "/etc/i3-cheat.conf"])
     root_config = ''.join([str(Path(__file__).parents[3]), "/etc/i3-cheat.conf"])
+
 
 def _get_position(lists, value):
     data = [string for string in lists if value in string]
@@ -40,6 +52,3 @@ def get_config(self, config):
 
     except Exception as e:
         print(e)
-        os.unlink(home + "/.config/i3-cheat/settings.conf")
-        if not os.path.isfile(home + "/.config/i3-cheat/settings.conf"):
-            shutil.copy(root_config, home + "/.config/i3-cheat/settings.conf")
